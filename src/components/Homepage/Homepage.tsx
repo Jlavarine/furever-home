@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Container, Box, Card, CardContent, Typography, CircularProgress, Button } from "@mui/material";
+import { Container, Box, Card, CardContent, Typography, CircularProgress, Button, ButtonGroup } from "@mui/material";
 import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
+import { buttonStyles } from "./Homepage.styles";
 
 
 const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
@@ -27,6 +28,10 @@ interface Dog {
     breed: string;
 }
 
+interface Match {
+    match: string
+}
+
 const HomePage: React.FC = () => {
     const [items, setItems] = useState<Item | null>(null);
     const [breeds, setBreeds] = useState<string[]>([]);
@@ -38,6 +43,8 @@ const HomePage: React.FC = () => {
     const [prevPage, setPrevPage] = useState("");
     const [selectedSort, setSelectedSort] = useState<string>("asc");
     const [favorites, setFavorites] = useState<string[]>([]);
+    const [matchId, setMatchId] = useState<string>('');
+    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
 
 
 
@@ -124,7 +131,7 @@ const HomePage: React.FC = () => {
         fetchData();
     }, [selectedBreeds, selectedSort]);
     useEffect(() => {
-        
+
     }, [favorites]);
 
 
@@ -143,6 +150,54 @@ const HomePage: React.FC = () => {
         );
     };
 
+    const getMatch = async () => {
+        try {
+            const matchResponse = await fetch(API_URL_Match, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(favorites)
+            });
+    
+            if (!matchResponse.ok) {
+                throw new Error(`Error: ${matchResponse.statusText}`);
+            }
+    
+            const match: Match = await matchResponse.json();
+            setMatchId(match.match);
+    
+            console.log("Matched ID:", match.match);
+    
+            if (match.match) {
+                const dogResponse = await fetch(API_URL_Dogs, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify([match.match]), 
+                });
+    
+                if (!dogResponse.ok) {
+                    throw new Error(`Error: ${dogResponse.statusText}`);
+                }
+    
+                const dogData = await dogResponse.json();
+    
+                setMatchedDog(dogData[0]); 
+    
+                console.log("Matched Dog Profile:", dogData[0]);
+            }
+        } catch (error) {
+            console.error("Error fetching match and dog profile:", error);
+        }
+    };
+    
+
     return (
         <Container sx={{ marginTop: 4 }}>
             <Typography variant="h3" gutterBottom>
@@ -155,6 +210,9 @@ const HomePage: React.FC = () => {
             <Box display="flex" justifyContent="center" gap={3} mt={3}>
                 <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
                 {selectedBreeds.length !== 1 ? <Sort label={selectedSort} selectedSort={selectedSort} setSelectedSort={setSelectedSort} /> : null}
+                <ButtonGroup variant="contained" color="primary">
+                    <Button disabled={!!!favorites.length}  onClick={() => getMatch()}sx={buttonStyles}>Generate a Perfect Match</Button>
+                </ButtonGroup>
             </Box>
             {loading && <CircularProgress />}
             {!loading && !error && dogs.length > 0 && (
