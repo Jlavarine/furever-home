@@ -3,6 +3,7 @@ import { Container, Box, Card, CardContent, Typography, CircularProgress, Button
 import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
+import Pagination from "../Pagination/Pagination";
 
 
 const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
@@ -69,7 +70,6 @@ const HomePage: React.FC = () => {
 
             
             const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSort ? '&': '?'}sort=breed:${selectedSort}`;
-            console.log(apiUrl)
             
             const listResponse = await fetch(apiUrl, {
                 method: "GET",
@@ -133,7 +133,6 @@ const HomePage: React.FC = () => {
                 Homepage
             </Typography>
 
-            {loading && <CircularProgress />}
 
             {error && <Typography color="error">{error}</Typography>}
 
@@ -141,7 +140,7 @@ const HomePage: React.FC = () => {
                 <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
                 {selectedBreeds.length !== 1 ? <Sort label={selectedSort} selectedSort={selectedSort} setSelectedSort={setSelectedSort} /> : null}
             </Box>
-
+            {loading && <CircularProgress />}
             {!loading && !error && dogs.length > 0 && (
                 <Box
                     sx={{
@@ -154,14 +153,10 @@ const HomePage: React.FC = () => {
                     {dogs.map((dog) => (
                         <DogCard key={dog.id} img={dog.img} name={dog.name} age={dog.age} zip_code={dog.zip_code} breed={dog.breed} />
                     ))}
-                    <Button onClick={() => getToPage(prevPage)} disabled={!prevPage}>
-                        Previous Page
-                    </Button>
-                    <Button onClick={() => getToPage(nextPage)} disabled={!nextPage}>
-                        Next Page
-                    </Button>
                 </Box>
             )}
+            
+            <Pagination prevPage={prevPage} nextPage={nextPage} getToPage={getToPage} />
         </Container>
     );
 };
