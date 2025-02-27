@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Box, Card, CardContent, Typography, CircularProgress, Button } from "@mui/material";
 import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
+import Sort from "../Sort/Sort";
 
 
 const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
@@ -34,6 +35,8 @@ const HomePage: React.FC = () => {
   const [nextPage, setNextPage] = useState("");
   const [prevPage, setPrevPage] = useState("");
   const [filters, setfilters] = useState(['Breed']);
+  const [selectedSort, setSelectedSort] = useState<string>("asc");
+
 
 
   useEffect(() => {
@@ -132,7 +135,6 @@ const HomePage: React.FC = () => {
 
         const data: Item = await response.json();
         setItems(data);
-        console.log(data)
         if(data.next) {
             setNextPage(data.next)
         }
@@ -226,6 +228,7 @@ const HomePage: React.FC = () => {
 
       <Box display="flex" justifyContent="center" gap={3} mt={3}>
         <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
+        <Sort label={selectedSort} selectedSort={selectedSort} setSelectedSort={setSelectedSort}/>
       </Box>
 
       {!loading && !error && dogs.length > 0 && (
