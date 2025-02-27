@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchList = async () => {
     const queryParams = new URLSearchParams();
-    const urlWithDefaultSort = `${API_URL}?sort=breed:asc`;
+    const urlWithDefaultSort = `${API_URL}?sort=breed:${selectedSort}`;
 
       try {
         const response = await fetch(urlWithDefaultSort, {
@@ -108,7 +108,7 @@ const HomePage: React.FC = () => {
     
 
     fetchList();
-  }, [breeds]);
+  }, [breeds, selectedSort]);
 
   useEffect(() => {
     const fetchList = async () => {
