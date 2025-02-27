@@ -10,14 +10,14 @@ interface SortProps {
 const Sort: React.FC<SortProps> = ({ label, selectedSort, setSelectedSort }) => {
   return (
     <FormControl sx={{ width: 200 }}>
-      <InputLabel id={`${label}-sort-label`}>{`Sort by ${label === 'asc' ? 'Ascending' : 'Descending'}`}</InputLabel>
+      <InputLabel id={`${label}-sort-label`}>{`Sort Breed Name by ${label === 'asc' ? 'A - Z' : 'Z - A'}`}</InputLabel>
       <Select
         labelId={`${label}-sort-label`}
         value={selectedSort}
         onChange={(e) => setSelectedSort(e.target.value)}
       >
-        <MenuItem value="asc">Ascending</MenuItem>
-        <MenuItem value="desc">Descending</MenuItem>
+        <MenuItem value="asc">A - Z</MenuItem>
+        <MenuItem value="desc">Z - A</MenuItem>
       </Select>
     </FormControl>
   );
