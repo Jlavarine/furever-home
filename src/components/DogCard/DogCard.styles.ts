@@ -1,5 +1,5 @@
 export const dogCard = {
-    maxWidth: { xs: "100%", sm: 345 }, // Full width on mobile, fixed width on larger screens
+    maxWidth: { xs: "100%", sm: 345 },
     boxShadow: 3,
     borderRadius: 3,
     overflow: "hidden",
@@ -10,12 +10,12 @@ export const dogCard = {
   export const dogImage = {
     objectFit: "cover",
     width: "100%",
-    height: { xs: "180px", sm: "200px", md: "220px" }, // Dynamic height scaling
+    height: { xs: "180px", sm: "200px", md: "220px" },
   };
   
   export const dogName = {
     fontWeight: "bold",
     color: "#333",
-    fontSize: { xs: "1.2rem", sm: "1.5rem" }, // Bigger text on larger screens
+    fontSize: { xs: "1.2rem", sm: "1.5rem" },
   };
   

@@ -1,16 +1,20 @@
 import React from "react";
-import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
+import { Card, CardMedia, CardContent, Typography, Box, IconButton } from "@mui/material";
 import { dogCard, dogImage, dogName } from "./DogCard.styles";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 interface DogProps {
+  id: string;
   img: string;
   name: string;
   age: number;
   zip_code: string;
   breed: string;
+  isFavorited: boolean;
+  toggleFavorite: (id: string) => void;
 }
 
-const DogCard: React.FC<DogProps> = ({ img, name, age, zip_code, breed }) => {
+const DogCard: React.FC<DogProps> = ({ id, img, name, age, zip_code, breed, isFavorited, toggleFavorite }) => {
   return (
     <Card
       sx={dogCard}
@@ -39,6 +43,12 @@ const DogCard: React.FC<DogProps> = ({ img, name, age, zip_code, breed }) => {
           ZIP: <b>{zip_code}</b>
         </Typography>
       </CardContent>
+        <IconButton onClick={() => toggleFavorite(id)} color="error">
+          {isFavorited ? <Favorite /> : <FavoriteBorder />}
+        </IconButton>
+        {isFavorited && <Typography variant="body2" color="text.secondary">
+          <b>{`${name} says "Thank you!"`}</b>
+        </Typography>}
     </Card>
   );
 };

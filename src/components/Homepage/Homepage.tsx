@@ -10,6 +10,7 @@ const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
 const API_URL = "https://frontend-take-home-service.fetch.com/dogs/search";
 const API_URL_Breeds = "https://frontend-take-home-service.fetch.com/dogs/breeds";
 const API_URL_Dogs = "https://frontend-take-home-service.fetch.com/dogs";
+const API_URL_Match = "https://frontend-take-home-service.fetch.com/dogs/match";
 
 interface Item {
     next: string;
@@ -36,6 +37,8 @@ const HomePage: React.FC = () => {
     const [nextPage, setNextPage] = useState("");
     const [prevPage, setPrevPage] = useState("");
     const [selectedSort, setSelectedSort] = useState<string>("asc");
+    const [favorites, setFavorites] = useState<string[]>([]);
+
 
 
 
@@ -46,7 +49,7 @@ const HomePage: React.FC = () => {
 
             const queryParams = new URLSearchParams();
 
-            
+
             if (breeds.length === 0) {
                 const breedResponse = await fetch(API_URL_Breeds, {
                     method: "GET",
@@ -65,12 +68,12 @@ const HomePage: React.FC = () => {
                 setBreeds(breedData.sort());
             }
 
-            
+
             selectedBreeds.forEach((breed) => queryParams.append("breeds", breed));
 
-            
-            const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSort ? '&': '?'}sort=breed:${selectedSort}`;
-            
+
+            const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSort ? '&' : '?'}sort=breed:${selectedSort}`;
+
             const listResponse = await fetch(apiUrl, {
                 method: "GET",
                 headers: {
@@ -86,10 +89,10 @@ const HomePage: React.FC = () => {
 
             const itemData: Item = await listResponse.json();
             setItems(itemData);
-            setNextPage(itemData.next || ""); 
-            setPrevPage(itemData.prev || ""); 
+            setNextPage(itemData.next || "");
+            setPrevPage(itemData.prev || "");
 
-            
+
             if (itemData.resultIds.length > 0) {
                 const dogResponse = await fetch(API_URL_Dogs, {
                     method: "POST",
@@ -115,9 +118,14 @@ const HomePage: React.FC = () => {
         }
     };
 
+
+
     useEffect(() => {
         fetchData();
     }, [selectedBreeds, selectedSort]);
+    useEffect(() => {
+        
+    }, [favorites]);
 
 
 
@@ -127,10 +135,18 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const toggleFavorite = (dogId: string) => {
+        setFavorites((favorites) =>
+            favorites.includes(dogId)
+                ? favorites.filter((id) => id !== dogId)
+                : [...favorites, dogId]
+        );
+    };
+
     return (
         <Container sx={{ marginTop: 4 }}>
             <Typography variant="h3" gutterBottom>
-                Homepage
+                Furever Home
             </Typography>
 
 
@@ -151,11 +167,20 @@ const HomePage: React.FC = () => {
                     }}
                 >
                     {dogs.map((dog) => (
-                        <DogCard key={dog.id} img={dog.img} name={dog.name} age={dog.age} zip_code={dog.zip_code} breed={dog.breed} />
+                        <DogCard
+                            key={dog.id}
+                            id={dog.id}
+                            img={dog.img}
+                            name={dog.name}
+                            age={dog.age}
+                            zip_code={dog.zip_code}
+                            breed={dog.breed}
+                            isFavorited={favorites.includes(dog.id)}
+                            toggleFavorite={toggleFavorite}
+                        />
                     ))}
                 </Box>
             )}
-            
             <Pagination prevPage={prevPage} nextPage={nextPage} getToPage={getToPage} />
         </Container>
     );
