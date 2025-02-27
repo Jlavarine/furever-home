@@ -1,14 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Login from './components/Login/Login';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login/Login";
+import HomePage from "./components/Homepage/Homepage";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <Login />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

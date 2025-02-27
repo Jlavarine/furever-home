@@ -1,14 +1,26 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Container, Typography, Alert, Paper, Box } from "@mui/material";
-import { loginContainer, loginPaper, formStyles, inputField, buttonStyle } from "./login.styles";
+import { useNavigate } from "react-router-dom";
+import { loginContainer, loginPaper, formStyles, inputField, buttonStyle } from "./Login.styles";
 
 const Login: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const emailInputRef = useRef<HTMLInputElement>(null);
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home"); 
+    }
+  }, [isAuthenticated, navigate]);
+
+
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +56,7 @@ const Login: React.FC = () => {
       }
 
       setError("");
-      alert("Login successful! You are now authenticated.");
+      setIsAuthenticated(true)
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred.");
     } finally {
