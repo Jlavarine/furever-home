@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Box, Card, CardContent, Typography, CircularProgress } from "@mui/material";
+import DogCard from "../DogCard/DogCard";
 
 const API_URL = "https://frontend-take-home-service.fetch.com/dogs/search";
 const API_URL_Dogs = "https://frontend-take-home-service.fetch.com/dogs";
@@ -95,17 +96,17 @@ const HomePage: React.FC = () => {
 
       {error && <Typography color="error">{error}</Typography>}
 
-      {!loading && !error && (
-        <Box>
-          {dogs.map((item) => (
-            <Card key={item.id}>
-              <CardContent>
-                <Typography variant="h5">{item.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {item.breed}
-                </Typography>
-              </CardContent>
-            </Card>
+      {!loading && !error && dogs.length > 0 && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: 4,
+            marginTop: 4,
+          }}
+        >
+          {dogs.map((dog) => (
+            <DogCard key={dog.id} img={dog.img} name={dog.name} age={dog.age} zip_code={dog.zip_code} breed={dog.breed} />
           ))}
         </Box>
       )}
