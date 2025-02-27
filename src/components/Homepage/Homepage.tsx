@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Box, Card, CardContent, Typography, CircularProgress, Button } from "@mui/material";
 import DogCard from "../DogCard/DogCard";
+import Filter from "../Filter/Filter";
 
 
 const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
@@ -26,12 +27,13 @@ interface Dog {
 const HomePage: React.FC = () => {
   const [items, setItems] = useState<Item | null>(null);
   const [breeds, setBreeds] = useState<string[]>([]);
+  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [nextPage, setNextPage] = useState("");
   const [prevPage, setPrevPage] = useState("");
-  const [filters, setfilters] = useState([]);
+  const [filters, setfilters] = useState(['Breed']);
 
 
   useEffect(() => {
@@ -52,7 +54,6 @@ const HomePage: React.FC = () => {
 
         const data: string[] = await response.json();
         setBreeds(data.sort());
-        console.log('Breeds',data)
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred.");
       } finally {
@@ -107,6 +108,51 @@ const HomePage: React.FC = () => {
   }, [breeds]);
 
   useEffect(() => {
+    const fetchList = async () => {
+    const queryParams = new URLSearchParams();
+    if (selectedBreeds.length) {
+          selectedBreeds.forEach((breed) => queryParams.append("breeds", breed));
+        }
+    
+    const urlWithFilterParams = `${API_URL}?${queryParams.toString()}`;
+
+      try {
+        const response = await fetch(urlWithFilterParams, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data: Item = await response.json();
+        setItems(data);
+        console.log(data)
+        if(data.next) {
+            setNextPage(data.next)
+        }
+        if(data.prev){
+            setPrevPage(data.prev)
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+
+    
+
+    fetchList();
+  }, [selectedBreeds]);
+
+  useEffect(() => {
     const fetchDogs = async () => {
         try {
           const dogIds = items?.resultIds
@@ -126,7 +172,6 @@ const HomePage: React.FC = () => {
   
           const data = await response.json();
           setDogs(data);
-          console.log('Dogs',data)
         } catch (err) {
           setError(err instanceof Error ? err.message : "An error occurred.");
         } finally {
@@ -178,6 +223,10 @@ const HomePage: React.FC = () => {
       {loading && <CircularProgress />}
 
       {error && <Typography color="error">{error}</Typography>}
+
+      <Box display="flex" justifyContent="center" gap={3} mt={3}>
+        <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
+      </Box>
 
       {!loading && !error && dogs.length > 0 && (
         <Box
