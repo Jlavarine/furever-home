@@ -1,21 +1,47 @@
-export const dogCard = {
-    maxWidth: { xs: "100%", sm: 345 },
-    boxShadow: 3,
-    borderRadius: 3,
+import { SxProps, Theme } from "@mui/material";
+
+export const dogCard: SxProps<Theme> = {
+    borderRadius: "16px",
     overflow: "hidden",
-    transition: "0.3s",
-    "&:hover": { boxShadow: 6 },
-  };
-  
-  export const dogImage = {
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    backgroundColor: "#f0f8ff",
+    "&:hover": {
+        transform: "translateY(-5px)",
+        boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.15)"
+    },
+};
+
+export const dogImage: SxProps<Theme> = {
     objectFit: "cover",
     width: "100%",
-    height: { xs: "180px", sm: "200px", md: "220px" },
-  };
-  
-  export const dogName = {
+    borderBottom: "4px solid #6cc4e0"
+};
+
+export const dogName: SxProps<Theme> = {
     fontWeight: "bold",
-    color: "#333",
-    fontSize: { xs: "1.2rem", sm: "1.5rem" },
-  };
-  
+    color: "#1976d2",
+    textAlign: "center",
+    marginBottom: 1
+};
+
+export const favoriteButton: SxProps<Theme> = {
+    backgroundColor: "#add8e6",
+    color: "#fff",
+    "&:hover": {
+        backgroundColor: "#6cc4e0",
+    },
+};
+
+export const favoriteMessage: SxProps<Theme> = {
+    color: "#1976d2",
+    fontStyle: "italic",
+};
+
+export const favoriteBox: SxProps<Theme> = {
+  display: "flex", 
+  alignItems: "center", 
+  justifyContent: "space-between",
+  px: 2, 
+  pb: 2
+};
