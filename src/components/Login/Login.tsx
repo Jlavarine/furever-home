@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Container, Typography, Alert, Paper, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { loginContainer, loginPaper, formStyles, inputField, buttonStyle } from "./Login.styles";
+import { API_URL_Login } from "../../constants";
 
 const Login: React.FC = () => {
   const [name, setName] = useState("");
@@ -40,7 +41,7 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await fetch("https://frontend-take-home-service.fetch.com/auth/login", {
+      const response = await fetch(API_URL_Login, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -7,7 +7,7 @@ import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
 import { buttonStyles } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
-import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match }  from '../../constants'
+import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout }  from '../../constants'
 
 interface HomePageProps {
     setMatchedDog: (dog: Dog | null) => void;
@@ -196,7 +196,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
     const logOut = async () => {
         try {
-            const response = await fetch("https://frontend-take-home-service.fetch.com/auth/logout", {
+            const response = await fetch(API_URL_Logout, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
