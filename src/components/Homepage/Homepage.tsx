@@ -5,7 +5,7 @@ import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
-import { buttonStyles } from "./Homepage.styles";
+import { pageContainer, headerBox, titleText, buttonGroup, filterBar, dogGrid, buttonStyles, errorText } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
 import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout, API_URL_Locations } from '../../constants'
 
@@ -54,7 +54,6 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     const [error, setError] = useState("");
     const [nextPage, setNextPage] = useState("");
     const [prevPage, setPrevPage] = useState("");
-    // const [selectedSort, setSelectedSort] = useState<string>("asc");
     const [selectedSortField, setSelectedSortField] = useState<string>("breed");
     const [selectedSortOrder, setSelectedSortOrder] = useState<string>("asc");
     const [favorites, setFavorites] = useState<string[]>([]);
@@ -281,20 +280,21 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
 
     return (
-        <Container sx={{ marginTop: 4 }}>
-            <Box>
-                <Typography variant="h3" gutterBottom>
+        <Container sx={pageContainer}>
+            <Box sx={headerBox}>
+                <Typography sx={titleText}>
                     Furever Home
                 </Typography>
-                <ButtonGroup variant="contained" color="primary">
-                    <Button onClick={() => logOut()} sx={buttonStyles} endIcon={<LogoutIcon />}>Log Out</Button>
+                <ButtonGroup sx={buttonGroup}>
+                    <Button onClick={() => logOut()} sx={buttonStyles} endIcon={<LogoutIcon />}>
+                        Log Out
+                    </Button>
                 </ButtonGroup>
             </Box>
-
-
-            {error && <Typography color="error">{error}</Typography>}
-
-            <Box display="flex" justifyContent="center" gap={3} mt={3}>
+    
+            {error && <Typography sx={errorText}>{error}</Typography>}
+    
+            <Box sx={filterBar}>
                 <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
                 <Filter label="ZipCode" options={zipCodesAll} selectedValues={selectedZipCodes} setSelectedValues={setSelectedZipCodes} />
                 <Sort
@@ -303,40 +303,31 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                     selectedSortOrder={selectedSortOrder}
                     setSelectedSortOrder={setSelectedSortOrder}
                 />
-
-                <ButtonGroup variant="contained" color="primary">
-                    <Button disabled={!!!favorites.length} onClick={() => getMatch()} sx={buttonStyles}>Generate a Perfect Match</Button>
+                <ButtonGroup>
+                    <Button disabled={!!!favorites.length} onClick={() => getMatch()} sx={buttonStyles}>
+                        Generate a Perfect Match
+                    </Button>
                 </ButtonGroup>
             </Box>
+    
             {loading && <CircularProgress />}
+    
             {!loading && !error && dogs.length > 0 && (
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                        gap: 4,
-                        marginTop: 4,
-                    }}
-                >
+                <Box sx={dogGrid}>
                     {dogs.map((dog) => (
                         <DogCard
                             key={dog.id}
-                            id={dog.id}
-                            img={dog.img}
-                            name={dog.name}
-                            age={dog.age}
-                            zip_code={dog.zip_code}
-                            breed={dog.breed}
-                            location={dog.location}
+                            {...dog}
                             isFavorited={favorites.includes(dog.id)}
                             toggleFavorite={toggleFavorite}
                         />
                     ))}
                 </Box>
             )}
+    
             <Pagination prevPage={prevPage} nextPage={nextPage} getToPage={getToPage} />
         </Container>
-    );
+    )
 };
 
 export default HomePage;

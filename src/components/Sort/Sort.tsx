@@ -1,5 +1,6 @@
 import React from "react";
 import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
+import { sortContainer, formControlStyles, selectStyles, menuItemStyles } from "./Sort.styles";
 
 interface SortProps {
   selectedSortField: string;
@@ -17,17 +18,18 @@ const Sort: React.FC<SortProps> = ({
   const isAlphabetical = selectedSortField === "breed" || selectedSortField === "name";
 
   return (
-    <Box display="flex" flexDirection="column" gap={2} sx={{ width: 200 }}>
-      <FormControl>
+    <Box sx={sortContainer}>
+      <FormControl sx={formControlStyles}>
         <InputLabel id="sort-field-label">Sort By</InputLabel>
         <Select
           labelId="sort-field-label"
           value={selectedSortField}
           onChange={(e) => setSelectedSortField(e.target.value)}
+          sx={selectStyles}
         >
-          <MenuItem value="breed">Breed</MenuItem>
-          <MenuItem value="name">Name</MenuItem>
-          <MenuItem value="age">Age</MenuItem>
+          <MenuItem value="breed" sx={menuItemStyles}>Breed</MenuItem>
+          <MenuItem value="name" sx={menuItemStyles}>Name</MenuItem>
+          <MenuItem value="age" sx={menuItemStyles}>Age</MenuItem>
         </Select>
       </FormControl>
 
@@ -37,9 +39,10 @@ const Sort: React.FC<SortProps> = ({
           labelId="sort-order-label"
           value={selectedSortOrder}
           onChange={(e) => setSelectedSortOrder(e.target.value)}
+          sx={selectStyles}
         >
-          <MenuItem value="asc">{isAlphabetical ? "A - Z" : "Ascending"}</MenuItem>
-          <MenuItem value="desc">{isAlphabetical ? "Z - A" : "Descending"}</MenuItem>
+          <MenuItem value="asc" sx={menuItemStyles}>{isAlphabetical ? "A - Z" : "Ascending"}</MenuItem>
+          <MenuItem value="desc" sx={menuItemStyles}>{isAlphabetical ? "Z - A" : "Descending"}</MenuItem>
 
         </Select>
       </FormControl>

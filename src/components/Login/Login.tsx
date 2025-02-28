@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Container, Typography, Alert, Paper, Box } from "@mui/material";
+import PetsIcon from '@mui/icons-material/Pets';
 import { useNavigate } from "react-router-dom";
-import { loginContainer, loginPaper, formStyles, inputField, buttonStyle } from "./Login.styles";
+import { loginContainer, loginPaper, formStyles, inputField, buttonStyle, headerBox, titleText } from "./Login.styles";
 import { API_URL_Login } from "../../constants";
 
 const Login: React.FC = () => {
@@ -17,7 +18,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home"); 
+      navigate("/home");
     }
   }, [isAuthenticated, navigate]);
 
@@ -68,9 +69,12 @@ const Login: React.FC = () => {
   return (
     <Container maxWidth="sm" sx={loginContainer}>
       <Paper elevation={3} sx={loginPaper}>
-        <Typography variant="h4" gutterBottom>
-          Login
-        </Typography>
+        <Box sx={headerBox}>
+          <Typography sx={titleText}>
+            Furever Home
+          </Typography>
+          <PetsIcon/>
+        </Box>
 
         {error && (
           <Typography >
