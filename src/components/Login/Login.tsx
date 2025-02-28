@@ -95,6 +95,7 @@ const Login: React.FC = () => {
             fullWidth
             sx={inputField}
             required
+            placeholder="Shaggy Rogers"
           />
 
           <TextField
@@ -106,6 +107,7 @@ const Login: React.FC = () => {
             fullWidth
             sx={inputField}
             required
+            placeholder="Shaggy@mysteryinc.com"
           />
 
           <Button
