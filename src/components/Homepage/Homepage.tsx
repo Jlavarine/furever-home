@@ -5,6 +5,7 @@ import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
 import { buttonStyles } from "./Homepage.styles";
+import { useNavigate } from "react-router-dom";
 
 
 const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
@@ -12,6 +13,10 @@ const API_URL = "https://frontend-take-home-service.fetch.com/dogs/search";
 const API_URL_Breeds = "https://frontend-take-home-service.fetch.com/dogs/breeds";
 const API_URL_Dogs = "https://frontend-take-home-service.fetch.com/dogs";
 const API_URL_Match = "https://frontend-take-home-service.fetch.com/dogs/match";
+
+interface HomePageProps {
+    setMatchedDog: (dog: Dog | null) => void;
+}
 
 interface Item {
     next: string;
@@ -32,7 +37,7 @@ interface Match {
     match: string
 }
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     const [items, setItems] = useState<Item | null>(null);
     const [breeds, setBreeds] = useState<string[]>([]);
     const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
@@ -44,9 +49,7 @@ const HomePage: React.FC = () => {
     const [selectedSort, setSelectedSort] = useState<string>("asc");
     const [favorites, setFavorites] = useState<string[]>([]);
     const [matchId, setMatchId] = useState<string>('');
-    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
-
-
+    const navigate = useNavigate();
 
 
     const fetchData = async (pageUrl?: string) => {
@@ -189,8 +192,7 @@ const HomePage: React.FC = () => {
                 const dogData = await dogResponse.json();
     
                 setMatchedDog(dogData[0]); 
-    
-                console.log("Matched Dog Profile:", dogData[0]);
+                navigate("/match");
             }
         } catch (error) {
             console.error("Error fetching match and dog profile:", error);
