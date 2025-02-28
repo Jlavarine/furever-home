@@ -3,6 +3,15 @@ import { Card, CardMedia, CardContent, Typography, Box, IconButton } from "@mui/
 import { dogCard, dogImage, dogName } from "./DogCard.styles";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
+interface Location {
+    zip_code: string
+    latitude: number
+    longitude: number
+    city: string
+    state: string
+    county: string
+}
+
 interface DogProps {
   id: string;
   img: string;
@@ -10,11 +19,12 @@ interface DogProps {
   age: number;
   zip_code: string;
   breed: string;
+  location: Location;
   isFavorited: boolean;
   toggleFavorite: (id: string) => void;
 }
 
-const DogCard: React.FC<DogProps> = ({ id, img, name, age, zip_code, breed, isFavorited, toggleFavorite }) => {
+const DogCard: React.FC<DogProps> = ({ id, img, name, age, zip_code, breed, location, isFavorited, toggleFavorite }) => {
   return (
     <Card
       sx={dogCard}
@@ -38,6 +48,9 @@ const DogCard: React.FC<DogProps> = ({ id, img, name, age, zip_code, breed, isFa
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Age: <b>{age} years</b>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          City: <b>{location.city}</b>
         </Typography>
         <Typography variant="body2" color="text.secondary">
           ZIP: <b>{zip_code}</b>

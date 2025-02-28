@@ -7,7 +7,7 @@ import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
 import { buttonStyles } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
-import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout }  from '../../constants'
+import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout, API_URL_Locations }  from '../../constants'
 
 interface HomePageProps {
     setMatchedDog: (dog: Dog | null) => void;
@@ -19,6 +19,15 @@ interface Item {
     resultIds: string[];
     total: number;
 }
+interface Location {
+    zip_code: string
+    latitude: number
+    longitude: number
+    city: string
+    state: string
+    county: string
+}
+
 interface Dog {
     id: string;
     img: string;
@@ -26,6 +35,7 @@ interface Dog {
     age: number;
     zip_code: string;
     breed: string;
+    location: Location
 }
 
 interface Match {
@@ -118,7 +128,41 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                 }
 
                 const dogData = await dogResponse.json();
-                setDogs(dogData);
+                const dogZipCodes = dogData.map((e: Dog) => e.zip_code)
+
+                const locationResponse = await fetch(API_URL_Locations, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(dogZipCodes),
+                });
+
+                if (!locationResponse.ok) {
+                    throw new Error(`Error: ${locationResponse.statusText}`);
+                }
+
+                const locationData: Location[] = await locationResponse.json();
+                const dogDataWithLocation = dogData.map((dog: Dog, index: number) => ({
+                    id: dog.id,
+                    img: dog.img,
+                    name: dog.name,
+                    age: dog.age,
+                    zip_code: dog.zip_code,
+                    breed: dog.breed,
+                    location: {
+                        zip_code: locationData[index].zip_code,
+                        latitude: locationData[index].latitude,
+                        longitude: locationData[index].longitude,
+                        city: locationData[index].city,
+                        state: locationData[index].state,
+                        county: locationData[index].county,
+                    }
+                }));
+                setDogs(dogDataWithLocation);
+
                 if(!selectedZipCodes.length) {
                     const zipCodes = dogData.map((e: Dog) => e.zip_code)
                     setZipCodesAll(zipCodes)
@@ -142,8 +186,6 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     useEffect(() => {
         
     }, [favorites,zipCodesAll,zipCodesFiltered]);
-
-
 
     const getToPage = (page: string) => {
         if (page) {
@@ -271,6 +313,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                             age={dog.age}
                             zip_code={dog.zip_code}
                             breed={dog.breed}
+                            location={dog.location}
                             isFavorited={favorites.includes(dog.id)}
                             toggleFavorite={toggleFavorite}
                         />
