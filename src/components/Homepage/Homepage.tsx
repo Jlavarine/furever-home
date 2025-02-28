@@ -7,7 +7,7 @@ import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
 import { buttonStyles } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
-import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout, API_URL_Locations }  from '../../constants'
+import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout, API_URL_Locations } from '../../constants'
 
 interface HomePageProps {
     setMatchedDog: (dog: Dog | null) => void;
@@ -54,7 +54,9 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     const [error, setError] = useState("");
     const [nextPage, setNextPage] = useState("");
     const [prevPage, setPrevPage] = useState("");
-    const [selectedSort, setSelectedSort] = useState<string>("asc");
+    // const [selectedSort, setSelectedSort] = useState<string>("asc");
+    const [selectedSortField, setSelectedSortField] = useState<string>("breed");
+    const [selectedSortOrder, setSelectedSortOrder] = useState<string>("asc");
     const [favorites, setFavorites] = useState<string[]>([]);
     const [matchId, setMatchId] = useState<string>('');
     const navigate = useNavigate();
@@ -91,7 +93,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
             selectedZipCodes.forEach((zip_code) => queryParams.append("zipCodes", zip_code));
 
 
-            const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSort ? '&' : '?'}sort=breed:${selectedSort}`;
+            const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSortField ? '&' : '?'}sort=${selectedSortField}:${selectedSortOrder}`;
 
             const listResponse = await fetch(apiUrl, {
                 method: "GET",
@@ -145,25 +147,30 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                 }
 
                 const locationData: Location[] = await locationResponse.json();
-                const dogDataWithLocation = dogData.map((dog: Dog, index: number) => ({
-                    id: dog.id,
-                    img: dog.img,
-                    name: dog.name,
-                    age: dog.age,
-                    zip_code: dog.zip_code,
-                    breed: dog.breed,
-                    location: {
-                        zip_code: locationData[index].zip_code,
-                        latitude: locationData[index].latitude,
-                        longitude: locationData[index].longitude,
-                        city: locationData[index].city,
-                        state: locationData[index].state,
-                        county: locationData[index].county,
+                // I had to use this function this way because I believe there is a bug in the BE
+                // Issue Summary:
+                // When the frontend requests a list of dogs via /dogs/search, followed by fetching profiles via /dogs, 
+                // and then locations via /locations, there is a consistent mismatch when the search is sorted by:
+                
+                // name:desc
+                // age:desc
+                
+                // The resultIds returned from /dogs/search do not fully match the profiles returned by /dogs, 
+                // or the locations returned by /locations. This results in missing dogs or misaligned location data, 
+                // ultimately causing the UI to crash when trying to access zip_code.
+                const dogDataWithLocation = dogData.map((dog: Dog, index: number) => {
+                    if (!dog || !locationData[index]) {
+                        console.warn(`Data mismatch at index ${index}`, { dog, location: locationData[index] });
+                        return null;
                     }
-                }));
+                    return {
+                        ...dog,
+                        location: locationData[index]
+                    };
+                }).filter(Boolean);
                 setDogs(dogDataWithLocation);
 
-                if(!selectedZipCodes.length) {
+                if (!selectedZipCodes.length) {
                     const zipCodes = dogData.map((e: Dog) => e.zip_code)
                     setZipCodesAll(zipCodes)
                 }
@@ -182,10 +189,11 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
     useEffect(() => {
         fetchData();
-    }, [selectedBreeds, selectedSort, selectedZipCodes]);
+    }, [selectedBreeds, selectedSortField, selectedSortOrder, selectedZipCodes]);
+
     useEffect(() => {
-        
-    }, [favorites,zipCodesAll,zipCodesFiltered]);
+
+    }, [favorites, zipCodesAll, zipCodesFiltered]);
 
     const getToPage = (page: string) => {
         if (page) {
@@ -212,16 +220,16 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                 credentials: "include",
                 body: JSON.stringify(favorites)
             });
-    
+
             if (!matchResponse.ok) {
                 throw new Error(`Error: ${matchResponse.statusText}`);
             }
-    
+
             const match: Match = await matchResponse.json();
             setMatchId(match.match);
-    
+
             console.log("Matched ID:", match.match);
-    
+
             if (match.match) {
                 const dogResponse = await fetch(API_URL_Dogs, {
                     method: "POST",
@@ -230,16 +238,16 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                         Accept: "application/json",
                     },
                     credentials: "include",
-                    body: JSON.stringify([match.match]), 
+                    body: JSON.stringify([match.match]),
                 });
-    
+
                 if (!dogResponse.ok) {
                     throw new Error(`Error: ${dogResponse.statusText}`);
                 }
-    
+
                 const dogData = await dogResponse.json();
-    
-                setMatchedDog(dogData[0]); 
+
+                setMatchedDog(dogData[0]);
                 navigate("/match");
             }
         } catch (error) {
@@ -250,27 +258,27 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     const logOut = async () => {
         try {
             const response = await fetch(API_URL_Logout, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                credentials: "include",
             });
-      
+
             if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.message || "Logout failed. Please try again.");
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Logout failed. Please try again.");
             }
-      
+
             setError("");
-          } catch (error: unknown) {
+        } catch (error: unknown) {
             setError(error instanceof Error ? error.message : "An error occurred.");
-          } finally {
+        } finally {
             navigate('/')
-          }
+        }
     }
-    
+
 
     return (
         <Container sx={{ marginTop: 4 }}>
@@ -279,8 +287,8 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                     Furever Home
                 </Typography>
                 <ButtonGroup variant="contained" color="primary">
-                    <Button onClick={() => logOut()}sx={buttonStyles} endIcon={<LogoutIcon/>}>Log Out</Button>
-                </ButtonGroup>           
+                    <Button onClick={() => logOut()} sx={buttonStyles} endIcon={<LogoutIcon />}>Log Out</Button>
+                </ButtonGroup>
             </Box>
 
 
@@ -289,9 +297,15 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
             <Box display="flex" justifyContent="center" gap={3} mt={3}>
                 <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
                 <Filter label="ZipCode" options={zipCodesAll} selectedValues={selectedZipCodes} setSelectedValues={setSelectedZipCodes} />
-                {selectedBreeds.length !== 1 ? <Sort label={selectedSort} selectedSort={selectedSort} setSelectedSort={setSelectedSort} /> : null}
+                <Sort
+                    selectedSortField={selectedSortField}
+                    setSelectedSortField={setSelectedSortField}
+                    selectedSortOrder={selectedSortOrder}
+                    setSelectedSortOrder={setSelectedSortOrder}
+                />
+
                 <ButtonGroup variant="contained" color="primary">
-                    <Button disabled={!!!favorites.length}  onClick={() => getMatch()}sx={buttonStyles}>Generate a Perfect Match</Button>
+                    <Button disabled={!!!favorites.length} onClick={() => getMatch()} sx={buttonStyles}>Generate a Perfect Match</Button>
                 </ButtonGroup>
             </Box>
             {loading && <CircularProgress />}

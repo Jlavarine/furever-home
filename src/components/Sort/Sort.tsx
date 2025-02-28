@@ -1,25 +1,49 @@
 import React from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
 
 interface SortProps {
-  label: string;
-  selectedSort: string;
-  setSelectedSort: (sort: string) => void;
+  selectedSortField: string;
+  setSelectedSortField: (field: string) => void;
+  selectedSortOrder: string;
+  setSelectedSortOrder: (order: string) => void;
 }
 
-const Sort: React.FC<SortProps> = ({ label, selectedSort, setSelectedSort }) => {
+const Sort: React.FC<SortProps> = ({
+  selectedSortField,
+  setSelectedSortField,
+  selectedSortOrder,
+  setSelectedSortOrder,
+}) => {
+  const isAlphabetical = selectedSortField === "breed" || selectedSortField === "name";
+
   return (
-    <FormControl sx={{ width: 200 }}>
-      <InputLabel id={`${label}-sort-label`}>{`Sort Breed Name by ${label === 'asc' ? 'A - Z' : 'Z - A'}`}</InputLabel>
-      <Select
-        labelId={`${label}-sort-label`}
-        value={selectedSort}
-        onChange={(e) => setSelectedSort(e.target.value)}
-      >
-        <MenuItem value="asc">A - Z</MenuItem>
-        <MenuItem value="desc">Z - A</MenuItem>
-      </Select>
-    </FormControl>
+    <Box display="flex" flexDirection="column" gap={2} sx={{ width: 200 }}>
+      <FormControl>
+        <InputLabel id="sort-field-label">Sort By</InputLabel>
+        <Select
+          labelId="sort-field-label"
+          value={selectedSortField}
+          onChange={(e) => setSelectedSortField(e.target.value)}
+        >
+          <MenuItem value="breed">Breed</MenuItem>
+          <MenuItem value="name">Name</MenuItem>
+          <MenuItem value="age">Age</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl>
+        <InputLabel id="sort-order-label">Order</InputLabel>
+        <Select
+          labelId="sort-order-label"
+          value={selectedSortOrder}
+          onChange={(e) => setSelectedSortOrder(e.target.value)}
+        >
+          <MenuItem value="asc">{isAlphabetical ? "A - Z" : "Ascending"}</MenuItem>
+          <MenuItem value="desc">{isAlphabetical ? "Z - A" : "Descending"}</MenuItem>
+
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 
