@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
 import HomePage from "./components/Homepage/Homepage";
 import MatchPage from "./components/MatchPage/MatchPage";
+import NotFound from "./components/NotFound/NotFound";
 
 interface Dog {
     id: string;
@@ -22,6 +23,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/home" element={<HomePage setMatchedDog={setMatchedDog} />} />
                 <Route path="/match" element={<MatchPage matchedDog={matchedDog} />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );
