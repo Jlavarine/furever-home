@@ -37,6 +37,9 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     const [breeds, setBreeds] = useState<string[]>([]);
     const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
     const [dogs, setDogs] = useState<Dog[]>([]);
+    const [zipCodesAll, setZipCodesAll] = useState<string[]>([]);
+    const [zipCodesFiltered, setZipCodesFiltered] = useState<string[]>([]);
+    const [selectedZipCodes, setSelectedZipCodes] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [nextPage, setNextPage] = useState("");
@@ -75,6 +78,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
 
             selectedBreeds.forEach((breed) => queryParams.append("breeds", breed));
+            selectedZipCodes.forEach((zip_code) => queryParams.append("zipCodes", zip_code));
 
 
             const apiUrl = pageUrl ? `${BASE_API_URL}${pageUrl}` : `${API_URL}?${queryParams.toString()}${selectedSort ? '&' : '?'}sort=breed:${selectedSort}`;
@@ -115,6 +119,13 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
                 const dogData = await dogResponse.json();
                 setDogs(dogData);
+                if(!selectedZipCodes.length) {
+                    const zipCodes = dogData.map((e: Dog) => e.zip_code)
+                    setZipCodesAll(zipCodes)
+                }
+                const zipCodes = dogData.map((e: Dog) => e.zip_code)
+                setZipCodesFiltered(zipCodes)
+
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred.");
@@ -127,10 +138,10 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
     useEffect(() => {
         fetchData();
-    }, [selectedBreeds, selectedSort]);
+    }, [selectedBreeds, selectedSort, selectedZipCodes]);
     useEffect(() => {
-
-    }, [favorites]);
+        
+    }, [favorites,zipCodesAll,zipCodesFiltered]);
 
 
 
@@ -235,6 +246,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
             <Box display="flex" justifyContent="center" gap={3} mt={3}>
                 <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
+                <Filter label="ZipCode" options={zipCodesAll} selectedValues={selectedZipCodes} setSelectedValues={setSelectedZipCodes} />
                 {selectedBreeds.length !== 1 ? <Sort label={selectedSort} selectedSort={selectedSort} setSelectedSort={setSelectedSort} /> : null}
                 <ButtonGroup variant="contained" color="primary">
                     <Button disabled={!!!favorites.length}  onClick={() => getMatch()}sx={buttonStyles}>Generate a Perfect Match</Button>
