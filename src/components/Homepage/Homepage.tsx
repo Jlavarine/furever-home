@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Container, Box, Card, CardContent, Typography, CircularProgress, Button, ButtonGroup } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
 import { buttonStyles } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
-
-
-const BASE_API_URL = "https://frontend-take-home-service.fetch.com";
-const API_URL = "https://frontend-take-home-service.fetch.com/dogs/search";
-const API_URL_Breeds = "https://frontend-take-home-service.fetch.com/dogs/breeds";
-const API_URL_Dogs = "https://frontend-take-home-service.fetch.com/dogs";
-const API_URL_Match = "https://frontend-take-home-service.fetch.com/dogs/match";
+import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match }  from '../../constants'
 
 interface HomePageProps {
     setMatchedDog: (dog: Dog | null) => void;
@@ -198,13 +193,42 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
             console.error("Error fetching match and dog profile:", error);
         }
     };
+
+    const logOut = async () => {
+        try {
+            const response = await fetch("https://frontend-take-home-service.fetch.com/auth/logout", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              credentials: "include",
+            });
+      
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.message || "Logout failed. Please try again.");
+            }
+      
+            setError("");
+          } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : "An error occurred.");
+          } finally {
+            navigate('/')
+          }
+    }
     
 
     return (
         <Container sx={{ marginTop: 4 }}>
-            <Typography variant="h3" gutterBottom>
-                Furever Home
-            </Typography>
+            <Box>
+                <Typography variant="h3" gutterBottom>
+                    Furever Home
+                </Typography>
+                <ButtonGroup variant="contained" color="primary">
+                    <Button onClick={() => logOut()}sx={buttonStyles} endIcon={<LogoutIcon/>}>Log Out</Button>
+                </ButtonGroup>           
+            </Box>
 
 
             {error && <Typography color="error">{error}</Typography>}
