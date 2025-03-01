@@ -4,6 +4,19 @@ Furever Home is a web application that helps users find their perfect dog match.
 
 The application communicates with a backend API to fetch available dog profiles, filter by user-selected criteria, and retrieve additional data like location coordinates for each dog.
 
+## Accessibility
+
+This project has been carefully designed and developed with accessibility in mind. As of the latest development cycle, the application has 0 accessibility violations when tested with [axe DevTools](https://www.deque.com/axe/devtools/).
+
+This commitment to accessibility ensures that **Furever Home** can be used comfortably by as many people as possible, including those who rely on assistive technologies.
+
+---
+
+### Accessibility Philosophy
+
+Accessibility is not a "feature" — it's a fundamental part of building quality web experiences.
+
+
 # Deployed Link
 https://jacob-lavarine.vercel.app/home
 
