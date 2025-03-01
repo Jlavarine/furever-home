@@ -23,7 +23,7 @@ const MatchPage: React.FC<MatchPageProps> = ({ matchedDog }) => {
     if (!matchedDog) {
         return (
             <Container sx={matchContainer}>
-                <Typography variant="h5" color="error">
+                <Typography variant="body1" color="error">
                     No match found. Please go back and select favorites first.
                 </Typography>
                 <Button
@@ -37,8 +37,8 @@ const MatchPage: React.FC<MatchPageProps> = ({ matchedDog }) => {
     }
 
     return (
-        <Container sx={matchContainer}>
-            <Typography variant="h3" sx={matchTitle}>
+        <Container component="main" sx={matchContainer}>
+            <Typography variant="h1" sx={matchTitle}>
                 <CelebrationIcon sx={celebrationIcon} />
                 Meet Your Perfect Match!
                 <CelebrationIcon sx={celebrationIcon} />
@@ -52,7 +52,7 @@ const MatchPage: React.FC<MatchPageProps> = ({ matchedDog }) => {
                     sx={matchImage}
                 />
                 <CardContent sx={matchDetails}>
-                    <Typography variant="h4">{matchedDog.name}</Typography>
+                    <Typography variant="h2">{matchedDog.name}</Typography>
                     <Typography variant="body1"><b>Breed:</b> {matchedDog.breed}</Typography>
                     <Typography variant="body1"><b>Age:</b> {matchedDog.age} years</Typography>
                     <Typography variant="body1"><b>Zip Code:</b> {matchedDog.zip_code}</Typography>

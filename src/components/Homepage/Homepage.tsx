@@ -288,7 +288,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
     return (
         <Container component="main" sx={pageContainer}>
             <Box component="header" sx={headerBox}>
-                <Typography sx={titleText}>
+                <Typography  variant="h1" sx={titleText}>
                     Furever Home
                 </Typography>
                 <ButtonGroup sx={buttonGroup}>
@@ -301,7 +301,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
             {error && <Typography role="alert" sx={errorText}>{error}</Typography>}
 
             <section aria-labelledby="filters-heading">
-                <Typography variant="h6" id="filters-heading" sx={srOnly}>
+                <Typography variant="h2" id="filters-heading" sx={srOnly}>
                     Filter and Sort Options
                 </Typography>
                 <Box sx={filterBar}>
@@ -334,7 +334,7 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
 
             {!loading && !error && dogs.length > 0 && (
                 <section aria-labelledby="results-heading">
-                    <Typography variant="h6" id="results-heading" sx={srOnly}>
+                    <Typography variant="h3" id="results-heading" sx={srOnly}>
                         Search Results
                     </Typography>
                     <Box sx={dogGrid}>

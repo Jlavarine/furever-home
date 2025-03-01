@@ -36,8 +36,8 @@ export const matchTitle: SxProps<Theme> = {
 };
 
 export const backButton: SxProps<Theme> = {
-    backgroundColor: "#add8e6",
-    color: "#fff",
+    backgroundColor: "#6cc4e0",
+    color: "black",
     fontSize: "1rem",
     textTransform: "none",
     paddingX: 4,

@@ -1,6 +1,6 @@
 import { SxProps, Theme } from "@mui/material/styles";
 
-const primaryColor = "#007bff";
+const primaryColor = "#1976d2";
 const accentColor = "#ff9800";
 const backgroundGradient = "linear-gradient(to bottom, #f0f4f8, #d9e2ec)";
 

@@ -67,10 +67,10 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={loginContainer}>
+    <Container component="main" maxWidth="sm" sx={loginContainer}>
       <Paper elevation={3} sx={loginPaper}>
         <Box sx={headerBox}>
-          <Typography sx={titleText}>
+          <Typography variant="h1" sx={titleText}>
             Furever Home
           </Typography>
           <PetsIcon/>

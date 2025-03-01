@@ -42,7 +42,7 @@ const DogCard: React.FC<DogProps> = ({
             />
 
             <CardContent>
-                <Typography id={`dog-name-${name}`} variant="h5" sx={dogName}>
+                <Typography id={`dog-name-${name}`} variant="h4" sx={dogName}>
                     {name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
