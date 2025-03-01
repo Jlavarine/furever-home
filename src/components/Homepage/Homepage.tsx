@@ -5,7 +5,7 @@ import DogCard from "../DogCard/DogCard";
 import Filter from "../Filter/Filter";
 import Sort from "../Sort/Sort";
 import Pagination from "../Pagination/Pagination";
-import { pageContainer, headerBox, titleText, buttonGroup, filterBar, dogGrid, buttonStyles, errorText } from "./Homepage.styles";
+import { pageContainer, headerBox, titleText, buttonGroup, filterBar, dogGrid, buttonStyles, errorText, srOnly } from "./Homepage.styles";
 import { useNavigate } from "react-router-dom";
 import { BASE_API_URL, API_URL, API_URL_Breeds, API_URL_Dogs, API_URL_Match, API_URL_Logout, API_URL_Locations } from '../../constants'
 
@@ -150,10 +150,10 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                 // Issue Summary:
                 // When the frontend requests a list of dogs via /dogs/search, followed by fetching profiles via /dogs, 
                 // and then locations via /locations, there is a consistent mismatch when the search is sorted by:
-                
+
                 // name:desc
                 // age:desc
-                
+
                 // The resultIds returned from /dogs/search do not fully match the profiles returned by /dogs, 
                 // or the locations returned by /locations. This results in missing dogs or misaligned location data, 
                 // ultimately causing the UI to crash when trying to access zip_code.
@@ -278,10 +278,16 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
         }
     }
 
+    useEffect(() => {
+        if (!loading && dogs.length > 0) {
+            document.getElementById('results-heading')?.focus();
+        }
+    }, [dogs]);
+
 
     return (
-        <Container sx={pageContainer}>
-            <Box sx={headerBox}>
+        <Container component="main" sx={pageContainer}>
+            <Box component="header" sx={headerBox}>
                 <Typography sx={titleText}>
                     Furever Home
                 </Typography>
@@ -291,41 +297,62 @@ const HomePage: React.FC<HomePageProps> = ({ setMatchedDog }) => {
                     </Button>
                 </ButtonGroup>
             </Box>
-    
-            {error && <Typography sx={errorText}>{error}</Typography>}
-    
-            <Box sx={filterBar}>
-                <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
-                <Filter label="ZipCode" options={zipCodesAll} selectedValues={selectedZipCodes} setSelectedValues={setSelectedZipCodes} />
-                <Sort
-                    selectedSortField={selectedSortField}
-                    setSelectedSortField={setSelectedSortField}
-                    selectedSortOrder={selectedSortOrder}
-                    setSelectedSortOrder={setSelectedSortOrder}
-                />
-                <ButtonGroup>
-                    <Button disabled={!!!favorites.length} onClick={() => getMatch()} sx={buttonStyles}>
-                        Generate a Perfect Match
-                    </Button>
-                </ButtonGroup>
-            </Box>
-    
-            {loading && <CircularProgress />}
-    
-            {!loading && !error && dogs.length > 0 && (
-                <Box sx={dogGrid}>
-                    {dogs.map((dog) => (
-                        <DogCard
-                            key={dog.id}
-                            {...dog}
-                            isFavorited={favorites.includes(dog.id)}
-                            toggleFavorite={toggleFavorite}
-                        />
-                    ))}
+
+            {error && <Typography role="alert" sx={errorText}>{error}</Typography>}
+
+            <section aria-labelledby="filters-heading">
+                <Typography variant="h6" id="filters-heading" sx={srOnly}>
+                    Filter and Sort Options
+                </Typography>
+                <Box sx={filterBar}>
+                    <Filter label="Breed" options={breeds} selectedValues={selectedBreeds} setSelectedValues={setSelectedBreeds} />
+                    <Filter label="ZipCode" options={zipCodesAll} selectedValues={selectedZipCodes} setSelectedValues={setSelectedZipCodes} />
+                    <Sort
+                        selectedSortField={selectedSortField}
+                        setSelectedSortField={setSelectedSortField}
+                        selectedSortOrder={selectedSortOrder}
+                        setSelectedSortOrder={setSelectedSortOrder}
+                    />
+                    <Box id="favorites-helper-text" sx={srOnly}>
+                        Select at least one dog as a favorite before generating a match.
+                    </Box>
+                    <ButtonGroup>
+                        <Button aria-describedby="favorites-helper-text" disabled={!!!favorites.length} onClick={() => getMatch()} sx={buttonStyles}>
+                            Generate a Perfect Match
+                        </Button>
+                    </ButtonGroup>
+                </Box>
+            </section>
+
+
+            {loading && (
+                <Box role="status" aria-live="polite">
+                    <CircularProgress />
+                    <Typography sx={srOnly}>Loading results...</Typography>
                 </Box>
             )}
-    
-            <Pagination prevPage={prevPage} nextPage={nextPage} getToPage={getToPage} />
+
+            {!loading && !error && dogs.length > 0 && (
+                <section aria-labelledby="results-heading">
+                    <Typography variant="h6" id="results-heading" sx={srOnly}>
+                        Search Results
+                    </Typography>
+                    <Box sx={dogGrid}>
+                        {dogs.map((dog) => (
+                            <DogCard
+                                key={dog.id}
+                                {...dog}
+                                isFavorited={favorites.includes(dog.id)}
+                                toggleFavorite={toggleFavorite}
+                            />
+                        ))}
+                    </Box>
+                </section>
+            )}
+
+            <Box component="nav" aria-label="Pagination">
+                <Pagination prevPage={prevPage} nextPage={nextPage} getToPage={getToPage} />
+            </Box>
         </Container>
     )
 };

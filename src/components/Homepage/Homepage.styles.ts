@@ -30,14 +30,25 @@ export const buttonGroup: SxProps<Theme> = {
 
 export const filterBar: SxProps<Theme> = {
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "center",
-    gap: 3,
+    gap: 2,
     mt: 3,
     padding: "12px",
     backgroundColor: "#fff",
     borderRadius: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    flexDirection: {
+        xs: "column", 
+        sm: "row"     
+    },
+    "& > *": {
+        width: {
+            xs: "100%",  
+            sm: "auto"   
+        }
+    }
 };
 
 export const dogGrid: SxProps<Theme> = {
@@ -69,4 +80,15 @@ export const buttonStyles: SxProps<Theme> = {
     backgroundColor: "#f0f0f0",
     color: "#555"
   }
+};
+
+export const srOnly = {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0,0,0,0)',
+    border: 0,
 };

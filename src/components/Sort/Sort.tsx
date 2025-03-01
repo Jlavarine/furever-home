@@ -23,6 +23,7 @@ const Sort: React.FC<SortProps> = ({
         <InputLabel id="sort-field-label">Sort By</InputLabel>
         <Select
           labelId="sort-field-label"
+          aria-label="Sort by field"
           value={selectedSortField}
           onChange={(e) => setSelectedSortField(e.target.value)}
           sx={selectStyles}
@@ -37,6 +38,7 @@ const Sort: React.FC<SortProps> = ({
         <InputLabel id="sort-order-label">Order</InputLabel>
         <Select
           labelId="sort-order-label"
+          aria-label="Sort by order"
           value={selectedSortOrder}
           onChange={(e) => setSelectedSortOrder(e.target.value)}
           sx={selectStyles}
