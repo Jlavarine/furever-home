@@ -18,7 +18,7 @@ Accessibility is not a "feature" — it's a fundamental part of building quality
 
 
 # Deployed Link
-https://jacob-lavarine.vercel.app/home
+https://jacob-lavarine.vercel.app
 
 # Running Furever Home Locally
 
